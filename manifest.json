@@ -1,0 +1,50 @@
+{
+	"name": "CESER",
+	"version": "0.1.9",
+	"description": "Test Extension",
+	"permissions" : [
+		"tabs" ,
+		"activeTab", 
+		"storage" ,
+		"*://*/*"
+	],
+	"background": {
+		"scripts": [
+			"js/Extension.js",
+			"js/background.js"
+		],
+		"persistent": false
+    },
+	"browser_action": {
+		"default_icon": "img/Logo.png",
+		"default_popup": "index.html"
+	},
+	"content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "run_at": "document_start",
+      "js": ["js/cs.js"]
+    }
+	],
+	"web_accessible_resources":
+	[
+		"js/Api.js",
+		"img/Logo.png"
+	],
+	"externally_connectable": {
+	  "matches": [
+		"*://credits.com/*",
+		"*://telegram.ru.com/*",
+		"*://localhost:*//*",
+		"*://creditsevents.com/*"
+		],
+	  "ids": ["*"]
+	},
+	"icons": {
+      "16": "img/Logo.png",
+      "32": "img/Logo.png",
+      "48": "img/Logo.png",
+      "128": "img/Logo.png"
+    },
+	"manifest_version": 2
+}
