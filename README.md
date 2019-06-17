@@ -168,7 +168,7 @@ return;
 })
 ```
 
-CreditsExtension.getHistory(Obj,callBack)
+## CreditsExtension.getHistory(Obj,callBack)
 
 •	Returns transaction history by a public key
 
