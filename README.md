@@ -67,7 +67,71 @@ Here you can see account details. Also, information can be found through QRCode 
 
 # Guide For Developers
 
-**Download & Install** 
+**Download & Install**
+
+# Connect to CESER
+
+Install the free google chrome extension - “ceser”
+
+<img src=".github/images/1.png" align="center">
+
+Icon appears in the upper left corner:
+
+<img src=".github/images/2.png" align="center">
+
+Installation completed
+
+For application development, use the listened localhost
+
+// for example server Apache 2.0
+
+Ubuntu 18.04: 
+
+
+```
+sudo apt-get install apache2
+service apache2 start
+```
+
+
+<img src=".github/images/3.png" align="center">
+
+Open the console in your browser F12
+
+Enter the following code to check
+
+
+<table>
+  <tr>
+   <td><code>if(typeof CreditsExtension === "object"){</code>
+<p>
+<code> \
+   alert("CreditsExtension - connect done")</code>
+<p>
+<code>}else{ \
+   alert("CreditsExtension - connect error") \
+}</code>
+   </td>
+  </tr>
+  <tr>
+   <td>
+   </td>
+  </tr>
+</table>
+
+
+as shown in the screenshot
+
+<img src=".github/images/4.png" align="center">
+
+Click Еnter
+
+
+<img src=".github/images/5.png" align="center">
+
+Use a localhost connection to develop and debug your application.
+
+To deploy your application for prod, please contact us to put you on the list of credits extention of the real domain name of your product.
 
 To start developing apps using CESER , you can download it here. The object “CreditsExtension” will appear in your console after installing the extension.
 
