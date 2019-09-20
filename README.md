@@ -149,11 +149,11 @@ if(typeof CreditsExtension === "object")
 ```
 ## Set of functions for sending extension calls
 
-**CreditsExtension.authorization(callBack)**
+**CreditsExtension.authorization()**
 
 • Checks user authorization in extension 
 
-• Awaits the ```callBack(response)``` function
+• Awaits the answer
 
 • Object is going to be passed to ```response``` function:
 ```
@@ -170,7 +170,7 @@ if(typeof CreditsExtension === "object")
 
 ## **Example**
 ```
-CreditsExtension.authorization(r => {
+CreditsExtension.authorization().then(r => {
 
 if(r.result === undefined){
 	alert(r.message);
@@ -184,11 +184,11 @@ if(r.result)
 }
 })
 ```
-## CreditsExtension.balanceGet(Obj,callBack)
+## CreditsExtension.balanceGet()
 
 • Returns balance by a public key
 
-• The object type will be passed to ```response``` variable (callBack)
+• The object type will be passed to ```response``` variable
 ```
 {
         message,
@@ -206,7 +206,7 @@ if(r.result)
 •	Obj looks like:
 ```
 {
-	Key: public key whose data is requested 
+	key: public key whose data is requested 
 }
 ```
 **Can be undefined**
@@ -215,15 +215,11 @@ If a key is not specified or Obj is _undefined_, then the balance of authorized 
 
 ## Call Examples
 
-CreditsExtension.balanceGet(undefined,callBack)
-
-CreditsExtension.balanceGet({},callBack)
-
-CreditsExtension.balanceGet({Key:”Requested key”},callBack)
+CreditsExtension.balanceGet().then(r =>  {});
 
 ## Example
 ```
-CreditsExtension.balanceGet({Key:”Requested key”},r => {
+CreditsExtension.balanceGet().then(r =>  {
 if(r.result === undefined){
 	alert(r.message);
 return;
@@ -232,16 +228,16 @@ return;
 })
 ```
 
-## CreditsExtension.getHistory(Obj,callBack)
+## ok.History(Obj,callBack).It`s need CreditsWork.js file.
 
 •	Returns transaction history by a public key
 
 •	object Obj has a form of: 
 ```
 {
-	Page: page number,
-	Size: number of transactions per on page,
-	Key: public key whose transactions will be returned. If the key is not specified, transactions of an authorized user will be returned. 
+	page: page number,
+	size: number of transactions per on page,
+	key: public key whose transactions will be returned. If the key is not specified, transactions of an authorized user will be returned. 
 
 }
 ```
@@ -269,30 +265,48 @@ The objects will be passed to ```response``` as:
 	smartInfo – smart contract condition information
 }
 ```
-## Call examples:
+## Call example:
 
-* CreditsExtension.getHistory({Page:0,Size:100},callBack)
+* ok.History(YourKey,page,100,function(r){});
 
-* CreditsExtension.getHistory({Page:0,Size:100,Key:Public key},callBack)
 
 ## Example
 ```
-CreditsExtension.getHistory({Page:0,Size:100}, r => {
-
-if(r.result === undefined){
-	alert(r.message);
-return;
-}
-console.log(r.result);
+var netIp;
+var netAport;
+CreditsExtension.curNet().then(r =>  
+{
+    var xhr = new XMLHttpRequest();
+xhr.open('GET', 'http://wallet.credits.com/api/"CreditsNetwork or testnet-r4_2 or DevsDappsTestnet"/api/NetWork');
+    xhr.onload = function (e) {
+        if (xhr.status != 200) {
+            alert('Network Request Error!');
+        } else {
+            let objnet = JSON.parse(xhr.responseText);
+            netIp = objnet[0].ip;
+            netAport = objnet[0].aport;
+            var ok = new CreditsWork(netIp,netAport);
+            let page = '1';
+            ok.History(YourKey,page,100,function(r)
+            {
+                if(r === undefined)
+                {
+                    alert(r.message);
+                    return;
+                }
+                 // code if success
+            });
+        }
+    }       
+    xhr.send(null);
 });
 ```
 
-## CreditsExtension.compiledSmartContractCode(Code,callBack)
+## CreditsExtension.compiledSmartContractCode(Code)
 
 Compiles a smart contract and reports compilation errors if those are found.
 
 • line Code – smart contract code
-• function callBack(response)
 • The object will be passed to response as:
 
 ```
@@ -313,7 +327,7 @@ Compiles a smart contract and reports compilation errors if those are found.
 
 ## Example
 ```
-CreditsExtension.compiledSmartContractCode(“Code”, r => {
+CreditsExtension.compiledSmartContractCode(code).then(r => {
 if(r.result === undefined){
 	alert(r.message);
 return;
@@ -321,11 +335,9 @@ return;
 console.log(r.result);
 });
 ```
-## CreditsExtension.sendTransaction(Transaction,callBack)
+## CreditsExtension.sendTransaction(Transaction)
 
 • Sends a transaction to blockchain;
-
-• function callBack(response)
 
 • The object will be passed to response as:
 ```
@@ -339,10 +351,8 @@ If ```result``` is ```undefined```, there will be a description of an error in `
 To send a transaction for a CS transfer, the Transaction object must have the following form:
 ```
 {
-            Target: Receiver’s public key ,
-            Amount: Amount Transfer,
-            Fee: Maximum transfer fee. If there is no value specified, an approximate amount of fee will be set in order 
-            to complete the transaction.  
+            target: Receiver’s public key ,
+            amount: Amount Transfer.  
 
 }
 ```
@@ -351,9 +361,8 @@ To send a transaction for a CS transfer, the Transaction object must have the fo
 ```
 CreditsExtension.sendTransaction({
 Target: Public key,
-Amount: “1.2”,
-Fee: “0.1”
-},r => {
+Amount: “1.2”
+}).then(r => {
 if(r.result === undefined){
 	alert(r.message);
 return;
@@ -365,35 +374,33 @@ console.log(r.result);
 To complete the smart contract method, the Transaction object must have the following form:
 ```
 {
-Target: Receiver’s public key ,
-            Fee: Maximum transfer fee. If not specified, then 
+	    target: Receiver’s public key ,
 
-	    SmartContract:
+	    smartContract:
 {
-            Params – parameters being passed to a method, array objects as: 
+            params – parameters being passed to a method, array objects as: 
 {
-	    K – data types (can be “STRING”, ”INT”, ”BOOL” ),
-	    V – transmitted data
+	    k – data types (can be “STRING”, ”INT”, ”BOOL” ),
+	    v – transmitted data
 }           The sequence of array corresponds to the sequence of arguments in the method.
-            Method – called method of a smart contract,
+            method – called method of a smart contract,
 }
 }
 ```
 ## Example
 ```
 CreditsExtension.sendTransaction({
-Target: Smart contract’s public key
-Fee: “0.1”,
-SmartContract:
+target: Smart contract’s public key,
+smartContract:
 {
-	Params: [
-	{K:“STRING”, V: “Test”},
-	{K:“INT”, V: 2},
-	{K:“BOOL”, V: true},
+	params: [
+	{k:“STRING”, v: “Test”},
+	{k:“INT”, v: 2},
+	{k:“BOOL”, v: true},
 ],
-Method: “Test”
+method: “Test”
 }
-},r => {
+}).then(r => {
 if(r.result === undefined){
 	alert(r.message);
 return;
@@ -405,23 +412,21 @@ console.log(r.result);
 **In order to deploy smart contract, the Transaction object must have the following form:**
  ```
 {
-            Fee: Maximum transfer fee. If not specified, then 
 
-	    SmartContract:
+	    smartContract:
 {
-            Сode: Smart contract code
+            code: Smart contract code
 }
 }
 ```
 ## Example
 ```
 CreditsExtension.sendTransaction({
-            Fee: “0.9”,
-	SmartContract:
+	smartContract:
 {
-            Сode: “Code”
+            code: “Code”
 }
-},r => {
+}).then(r => {
 if(r.result === undefined){
 	alert(r.message);
 return;
