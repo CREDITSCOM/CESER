@@ -5,7 +5,7 @@ window.onload = function () {
 
 function main()
 {
-	chrome.storage.local.get(['CS_PrivateKey','CS_PublicKey',"CS_NET"], function(d) {
+	chrome.storage.local.get(['CS_PrivateKey','CS_PublicKey','CS_NET'], function(d) {
 		if(d.CS_PublicKey === undefined)
 		{
 			RenderLogIn();
@@ -16,8 +16,8 @@ function main()
 			CS_PrivateKey = Base58.decode(d.CS_PrivateKey);
 			if(d.CS_NET === undefined)
 			{
-				chrome.storage.local.set({CS_NET: {Name:"main", Url:"169.38.89.217", Port:"8081",Mon:"testnet-r4_2"}});
-				CS_NET = {Name: "main",Url: "169.38.89.217",Port:"8081",Mon:"testnet-r4_2"};
+				chrome.storage.local.set({CS_NET: {Name:"test", Url:"165.22.212.41", Port:"18081",Mon:"testnet"}});
+				CS_NET = {Name: "test",Url: "165.22.212.41",Port:"18081",Mon:"testnet"};
 			}else{
 				CS_NET = d.CS_NET;
 			}
@@ -186,8 +186,8 @@ function RenderMain()
 				<div class="top-line-part2">
 					<div class="login">
 						<select id="CS_Net" class="button-c button100">
-							<option value="main" Url="169.47.105.253" Port="8081" Mon="CreditsNetwork">CreditsNetwork</option>
-							<option value="testnet" Url="169.38.89.217" Port="8081" Mon="testnet-r4_2">TestNet</option>
+							<option value="main" Url="165.22.212.41" Port="18081" Mon="CreditsNetwork">CreditsNetwork</option>
+							<option value="testnet" Url="165.22.212.41" Port="18081" Mon="testnet">TestNet</option>
 						 </select>
 					</div>
 					<div class="burgmenu">
@@ -213,7 +213,9 @@ function RenderMain()
 			<span>Powered by Credits</span>
 		</footer>
 	`);
-	$("#WalletKey").on("click",function(){chrome.tabs.create({url:`https://monitor.credits.com/${Mon}/account/${Base58.encode(CS_PublicKey)}`})})
+	$("#WalletKey").on("click",function(){
+		chrome.tabs.create({url:`https://monitor.credits.com/${Mon}/account/${Base58.encode(CS_PublicKey)}`})
+	})
 	$("#logostart").on("click",RenderStart);
 	$("#UpdateBalance").on("click",CheckBalance);
 	$("#CopyWalletKey").on("click",CopyWalletKey);
@@ -228,7 +230,14 @@ function RenderMain()
 		Url = $("#CS_Net :selected").attr("Url");
 		Port = $("#CS_Net :selected").attr("Port");
 		Mon = $("#CS_Net :selected").attr("Mon")
-		chrome.storage.local.set({CS_NET: {Name:$("#CS_Net :selected").val(), Url:Url, Port:Port,Mon:Mon}});
+		chrome.storage.local.set({
+			CS_NET: {
+				Name:$("#CS_Net :selected").val()
+				, Url:Url
+				, Port:Port
+				,Mon:Mon
+			}
+		});
 		CheckBalance();
 	});
 	CheckBalance();
@@ -656,18 +665,37 @@ function CreateKey()
 
 function CheckBalance()
 {
+	console.log("CheckBalance");
 	Loader();
 	SignCS.Connect().WalletBalanceGet(CS_PublicKey,function(r){
-		if(r.status.code > 0 && r.status.message != "Not found")
+		if(r == null)
 		{
+			CloseLoader();
+			console.log('not connected');
+			return;
+		}
+		if(r.status == null)
+		{
+			CloseLoader();
+			console.log('no status');
+			return;
+		}
+
+		if(r.status.code > 0)
+		{
+			CloseLoader();
+			if(r.status.message != "Not found"){
+				console.log('Not found');
+			}
 			$("#Error").html(r.status.message);
 			return;
 		}
 		else
 		{
+			CloseLoader();
 			$("#Balance").html(Math.round((r.balance.integral + r.balance.fraction * Math.pow(10,-18)) * 1000) / 1000 + " CS")
 		}
-		CloseLoader();
+
 	});
 }
 
