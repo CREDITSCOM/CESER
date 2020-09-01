@@ -16,8 +16,9 @@ function main()
 			CS_PrivateKey = Base58.decode(d.CS_PrivateKey);
 			if(d.CS_NET === undefined)
 			{
-				chrome.storage.local.set({CS_NET: {Name:"test", Url:"165.22.212.41", Port:"18081",Mon:"testnet"}});
-				CS_NET = {Name: "test",Url: "165.22.212.41",Port:"18081",Mon:"testnet"};
+				chrome.storage.local.set({CS_NET: {Name:"MainNet", Url:"165.22.220.8", Port:"8081", Mon:"CreditsNetwork"}});
+				CS_NET = {Name: "test", Url:"165.22.220.8", Port:"8081", Mon:"CreditsNetwork"};
+				//CS_NET = {Name: "test",Url: "165.22.212.41",Port:"18081",Mon:"testnet"};
 			}else{
 				CS_NET = d.CS_NET;
 			}
@@ -186,7 +187,7 @@ function RenderMain()
 				<div class="top-line-part2">
 					<div class="login">
 						<select id="CS_Net" class="button-c button100">
-							<option value="main" Url="165.22.212.41" Port="18081" Mon="CreditsNetwork">CreditsNetwork</option>
+							<option value="main" Url="165.22.220.8" Port="8081" Mon="CreditsNetwork">CreditsNetwork</option>
 							<option value="testnet" Url="165.22.212.41" Port="18081" Mon="testnet">TestNet</option>
 						 </select>
 					</div>
